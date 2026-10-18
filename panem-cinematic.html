@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panem Arena – Edisi Sinematik</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--text:#F4EBE2;--dim:#C2B3A4;--accent:#FF7A2A;--gold:#E3B04B;--green:#58C27D;--glass:rgba(16,14,14,.58);--edge:rgba(255,160,90,.32);--head:"Oswald","Arial Narrow",sans-serif;--body:"Lora",Georgia,serif}
+[data-theme="capitol"]{--accent:#FF5FB0;--gold:#F6D365;--green:#7BE0D2;--edge:rgba(255,95,176,.4);--glass:rgba(30,12,36,.58)}
+*{box-sizing:border-box;margin:0}
+body{background:#05070a;color:var(--text);font:1.1rem/1.65 var(--body);min-height:100vh}
+#bgv{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;opacity:0;transition:opacity 1.5s}
+#gl{position:fixed;inset:0;width:100%;height:100%;z-index:-1}
+.vig{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.65) 100%)}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
+header{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:.8rem;flex-wrap:wrap;padding:.8rem 1.5rem;background:linear-gradient(rgba(0,0,0,.65),transparent);transition:opacity .6s}
+.logo{font:700 1.4rem var(--head);letter-spacing:.1em;color:var(--accent);text-shadow:0 0 18px var(--accent)}
+.right{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+nav{display:flex;gap:.2rem}
+nav button,.cinebtn{font:500 1rem var(--head);letter-spacing:.06em;color:var(--dim);background:none;border:0;border-bottom:3px solid transparent;padding:.4rem .9rem;cursor:pointer}
+nav button:hover,.cinebtn:hover{color:var(--text)}
+nav button[aria-current]{color:var(--text);border-color:var(--accent)}
+.cinebtn{border:1px solid var(--edge);border-radius:999px;background:var(--glass);backdrop-filter:blur(8px)}
+
+main{position:relative;z-index:2;max-width:980px;margin:0 auto;padding:3rem 1.4rem 4rem;transition:opacity .8s}
+body.cine main,body.cine header .right nav,body.cine footer{opacity:0;pointer-events:none}
+.page{display:none}.page.on{display:block;animation:in .7s ease both}
+@keyframes in{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+h1,h2,h3{font-family:var(--head);line-height:1.05}
+h1{font-size:clamp(3.2rem,10vw,7rem);font-weight:700;max-width:10ch;text-shadow:0 0 60px rgba(255,122,42,.45),0 4px 30px #000}
+h1 em{font-style:normal;color:var(--accent)}
+h2{font-size:clamp(2rem,5vw,3rem);margin-bottom:.5rem;text-shadow:0 2px 20px #000}
+h3{font-size:1.25rem;font-weight:500;color:var(--gold);letter-spacing:.03em}
+.lead{color:#E6D8C9;font-size:1.3rem;max-width:40ch;margin:1.2rem 0 1.8rem;text-shadow:0 2px 14px #000}
+.btn{font:700 1rem var(--head);letter-spacing:.08em;background:var(--accent);color:#15100c;border:0;border-radius:6px;padding:.75rem 1.6rem;cursor:pointer;box-shadow:0 0 30px color-mix(in srgb,var(--accent) 50%,transparent);transition:transform .15s,filter .15s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.12)}
+.btn.ghost{background:var(--glass);color:var(--text);border:2px solid var(--edge);box-shadow:none;margin-left:.5rem;backdrop-filter:blur(8px)}
+.panel,.stage{background:var(--glass);border:1px solid var(--edge);border-radius:14px;padding:1.2rem 1.3rem;backdrop-filter:blur(14px)}
+.panel p{color:var(--dim);font-size:1rem;margin-top:.4rem}
+.cols{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));margin-top:2.2rem}
+.films{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.8rem;margin-top:1rem}
+.film{border-left:4px solid var(--accent);padding:.3rem 0 .3rem .9rem;text-shadow:0 2px 12px #000}
+.film b{font:700 1.8rem var(--head);color:var(--gold)}.film span{display:block;font-size:1rem;color:#E6D8C9}
+.note{font-size:.9rem;color:var(--dim);margin-top:2rem;font-style:italic}
+.sw-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.8rem;margin:1rem 0 1.8rem}
+.sw{height:90px;border-radius:10px;padding:.7rem;display:flex;flex-direction:column;justify-content:flex-end;font:500 .95rem var(--head);border:1px solid var(--edge)}
+.sw small{font:400 .9rem var(--body)}
+.switch{display:inline-flex;border:2px solid var(--edge);border-radius:999px;overflow:hidden;margin:.6rem 0 1.6rem;background:var(--glass)}
+.switch button{font:500 1rem var(--head);background:none;color:var(--dim);border:0;padding:.55rem 1.4rem;cursor:pointer}
+.switch button[aria-pressed="true"]{background:var(--accent);color:#15100c}
+.tabs{display:flex;gap:.6rem;flex-wrap:wrap;margin:1rem 0 1.2rem}
+.tab{flex:1 1 200px;text-align:left;font:inherit;color:var(--text);background:var(--glass);border:1px solid var(--edge);border-radius:12px;padding:.8rem 1rem;cursor:pointer;backdrop-filter:blur(10px);transition:.2s}
+.tab b{display:block;font:500 1.15rem var(--head)}.tab span{font-size:.95rem;color:var(--dim)}
+.tab[aria-pressed="true"]{box-shadow:0 0 0 2px var(--gold) inset}
+.hud{display:flex;gap:1.4rem;flex-wrap:wrap;font:500 1.1rem var(--head);margin-bottom:.8rem}.hud b{color:var(--gold)}
+canvas.game{width:100%;max-width:640px;aspect-ratio:16/9;display:block;border-radius:10px;cursor:crosshair;margin-bottom:.9rem;touch-action:none}
+.mem{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;max-width:440px;margin-bottom:.9rem}
+.card{position:relative;aspect-ratio:1;perspective:600px;background:none;border:0;cursor:pointer;font-size:2.2rem}
+.card i{position:absolute;inset:0;display:grid;place-items:center;border-radius:10px;backface-visibility:hidden;transition:transform .45s;font-style:normal}
+.card .f{background:var(--accent);color:#15100c;font:700 1.4rem var(--head)}
+.card .b{background:#0d0b0b;border:2px solid var(--gold);transform:rotateY(180deg)}
+.card.up .f{transform:rotateY(180deg)}.card.up .b{transform:none}.card.done .b{border-color:var(--green)}
+.q{font:500 1.5rem/1.25 var(--head);margin-bottom:1rem}
+.opts{display:grid;gap:.5rem;max-width:520px}
+.opt{text-align:left;font:inherit;color:var(--text);background:rgba(0,0,0,.4);border:2px solid var(--edge);border-radius:8px;padding:.65rem 1rem;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--gold)}.opt.ok{border-color:var(--green)}.opt.no{border-color:#e0524d}
+.msg{min-height:1.6rem;color:var(--dim);margin:.6rem 0}
+footer{position:relative;z-index:2;text-align:center;padding:1.4rem;color:var(--dim);font-size:.9rem;transition:opacity .6s}
+.exit{position:fixed;left:50%;bottom:1.5rem;transform:translateX(-50%);z-index:6;display:none}
+body.cine .exit{display:block}
+@media(prefers-reduced-motion:reduce){.page.on{animation:none}.card i{transition:none}}
+</style>
+</head>
+<body>
+<video id="bgv" muted loop autoplay playsinline preload="auto"><source src="background.mp4" type="video/mp4"></video>
+<canvas id="gl" aria-hidden="true"></canvas>
+<div class="vig"></div>
+
+<header>
+  <div class="logo">PANEM ARENA</div>
+  <div class="right">
+    <nav aria-label="Navigasi utama">
+      <button data-go="home">Home</button><button data-go="design">Design</button><button data-go="product">Product</button>
+    </nav>
+    <button class="cinebtn" id="cine">🎬 Sinematik</button>
+  </div>
+</header>
+
+<main>
+  <section class="page" id="home">
+    <h1>Masuki <em>Arena</em></h1>
+    <p class="lead">Hutan berkabut, aurora di langit, dan satu obor yang menyala. Jelajahi dunia The Hunger Games dan mainkan tiga game di dalamnya.</p>
+    <button class="btn" data-go="product">Mainkan game</button>
+    <button class="btn ghost" id="cine2">Lihat suasananya</button>
+    <div class="panel" style="margin-top:3rem">
+      <h3>Tentang filmnya</h3>
+      <p style="font-size:1.05rem">The Hunger Games diadaptasi dari novel karya Suzanne Collins. Di negara Panem, Capitol memaksa tiap distrik mengirim dua remaja ke pertandingan bertahan hidup yang disiarkan ke seluruh negeri. Film pertama disutradarai Gary Ross, dan film-film berikutnya oleh Francis Lawrence.</p>
+      <div class="films">
+        <div class="film"><b>2012</b><span>The Hunger Games</span></div>
+        <div class="film"><b>2013</b><span>Catching Fire</span></div>
+        <div class="film"><b>2014</b><span>Mockingjay – Part 1</span></div>
+        <div class="film"><b>2015</b><span>Mockingjay – Part 2</span></div>
+        <div class="film"><b>2023</b><span>The Ballad of Songbirds &amp; Snakes</span></div>
+      </div>
+    </div>
+    <p class="note">Situs penggemar untuk tugas, tidak berafiliasi dengan Lionsgate maupun Suzanne Collins.</p>
+  </section>
+
+  <section class="page" id="design">
+    <h2>Design</h2>
+    <p class="lead" style="margin-top:.4rem">Kontras antara bara hutan distrik dan kilau neon Capitol. Ganti tema dan seluruh adegan 3D ikut berubah.</p>
+    <h3>Tema</h3>
+    <div class="switch" role="group" aria-label="Pilih tema">
+      <button id="t-d" aria-pressed="true">Distrik</button><button id="t-c" aria-pressed="false">Capitol</button>
+    </div>
+    <h3>Palet warna</h3>
+    <div class="sw-grid">
+      <div class="sw" style="background:#0b0f14;color:#fff">Malam<small>latar</small></div>
+      <div class="sw" style="background:var(--accent);color:#15100c">Api<small>aksen</small></div>
+      <div class="sw" style="background:var(--gold);color:#15100c">Emas<small>sorotan</small></div>
+      <div class="sw" style="background:var(--green);color:#15100c">Hijau<small>berhasil</small></div>
+    </div>
+    <div class="cols">
+      <div class="panel"><h3>Langit aurora</h3><p>Dibuat dengan shader GLSL: gradasi langit, pita aurora yang bergerak, dan bintang berkedip.</p></div>
+      <div class="panel"><h3>Hutan 3D</h3><p>Ratusan pohon pinus digambar sekaligus dengan InstancedMesh, ditambah kabut agar terasa dalam.</p></div>
+      <div class="panel"><h3>Api dan bara</h3><p>Nyala obor memakai sistem partikel cahaya, lengkap dengan lampu yang berkedip.</p></div>
+    </div>
+    <p class="note">Ingin video sungguhan? Taruh file <b>background.mp4</b> di folder yang sama dengan file ini. Video akan otomatis menggantikan langit buatan.</p>
+  </section>
+
+  <section class="page" id="product">
+    <h2>Product: Game Interaktif</h2>
+    <div class="tabs" id="tabs" role="group" aria-label="Pilih game">
+      <button class="tab" data-g="archery"><b>Panah Tepat</b><span>Bidik target bergerak, 30 detik</span></button>
+      <button class="tab" data-g="memory"><b>Memori Distrik</b><span>Cocokkan 6 pasang lambang</span></button>
+      <button class="tab" data-g="quiz"><b>Kuis Panem</b><span>5 pertanyaan tentang filmnya</span></button>
+    </div>
+    <div class="stage" id="stage"></div>
+  </section>
+</main>
+<button class="btn exit" id="exit">Kembali ke halaman</button>
+<footer>Tugas Website – Home, Design, Product · Three.js · Situs penggemar</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const reduce = matchMedia("(prefers-reduced-motion:reduce)").matches;
+const $ = id => document.getElementById(id);
+
+/* ================== ADEGAN 3D ================== */
+const themes = {
+  d:{aur:0x3fd08a, hor:0xff6a21, fire:0xff7a2a, fog:0x0a1016},
+  c:{aur:0xff4fa3, hor:0x8a5cff, fire:0xff5fb0, fog:0x14081c}
+};
+let T = themes.d, scene, cam, ren, sky, flame, fcol, light, emb, clock = new THREE.Clock();
+let mx = 0, my = 0, cine = false, orbit = 0;
+const view = {
+  home:   {p:[0,2.4,9.5],  l:[0,2.6,0]},
+  design: {p:[-7,5.5,9],   l:[0,2.2,0]},
+  product:{p:[5.5,1.7,5.5],l:[0,2.4,0]}
+};
+let vt = view.home, look = new THREE.Vector3(0,2.6,0);
+
+function glowTex(){
+  const c = document.createElement("canvas"); c.width = c.height = 64; const x = c.getContext("2d");
+  const g = x.createRadialGradient(32,32,0,32,32,32);
+  g.addColorStop(0,"rgba(255,255,255,1)"); g.addColorStop(.35,"rgba(255,255,255,.55)"); g.addColorStop(1,"rgba(255,255,255,0)");
+  x.fillStyle = g; x.fillRect(0,0,64,64); return new THREE.CanvasTexture(c);
+}
+function initScene(){
+  ren = new THREE.WebGLRenderer({canvas:$("gl"), antialias:true, alpha:true});
+  ren.setPixelRatio(Math.min(devicePixelRatio,1.75));
+  ren.toneMapping = THREE.ACESFilmicToneMapping; ren.toneMappingExposure = 1.15; ren.outputEncoding = THREE.sRGBEncoding;
+  scene = new THREE.Scene(); scene.fog = new THREE.FogExp2(T.fog, .05);
+  cam = new THREE.PerspectiveCamera(55, 1, .1, 150); cam.position.set(...view.home.p);
+
+  // Langit aurora (shader)
+  sky = new THREE.Mesh(new THREE.SphereGeometry(90,32,16), new THREE.ShaderMaterial({
+    side:THREE.BackSide, depthWrite:false,
+    uniforms:{t:{value:0}, c1:{value:new THREE.Color(T.aur)}, c2:{value:new THREE.Color(T.hor)}},
+    vertexShader:`varying vec3 vP;void main(){vP=normalize(position);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+    fragmentShader:`uniform float t;uniform vec3 c1;uniform vec3 c2;varying vec3 vP;
+      float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+      void main(){
+        float y=clamp(vP.y,0.,1.);
+        vec3 col=mix(vec3(.05,.06,.1),vec3(.005,.008,.025),pow(y,.45));
+        col+=c2*.28*pow(1.-y,3.);
+        float w=sin(vP.x*7.+t*.35+sin(vP.z*5.+t*.25)*2.)*.5+.5;
+        float band=smoothstep(.1,.4,y)*(1.-smoothstep(.55,.95,y));
+        col+=c1*pow(w,2.)*band*.6;
+        vec2 g=floor(vec2(atan(vP.z,vP.x)*70.,vP.y*70.));
+        col+=step(.9968,h(g))*step(.2,y)*(.6+.4*sin(t*2.+h(g)*50.));
+        gl_FragColor=vec4(col,1.);}`
+  }));
+  scene.add(sky);
+
+  // Tanah bergelombang
+  const gg = new THREE.PlaneGeometry(140,140,70,70), p = gg.attributes.position;
+  for(let i=0;i<p.count;i++){ const x=p.getX(i), y=p.getY(i), d=Math.min(1,Math.hypot(x,y)/14);
+    p.setZ(i, d*.9*Math.sin(x*.22)*Math.cos(y*.19) + d*(Math.random()-.5)*.15); }
+  gg.computeVertexNormals();
+  const ground = new THREE.Mesh(gg, new THREE.MeshStandardMaterial({color:0x1a2a1c, roughness:1, flatShading:true}));
+  ground.rotation.x = -Math.PI/2; scene.add(ground);
+
+  // Hutan pinus (instancing)
+  const N = 260, fol = new THREE.MeshStandardMaterial({color:0x143322, roughness:.9, flatShading:true});
+  const trunk = new THREE.InstancedMesh(new THREE.CylinderGeometry(.14,.2,1.4,6), new THREE.MeshStandardMaterial({color:0x2a1c12,roughness:1}), N);
+  const c1 = new THREE.InstancedMesh(new THREE.ConeGeometry(1.3,3.4,7), fol, N);
+  const c2 = new THREE.InstancedMesh(new THREE.ConeGeometry(.95,2.8,7), fol, N);
+  const o = new THREE.Object3D();
+  for(let i=0;i<N;i++){
+    const a = Math.random()*6.283, r = 8 + Math.pow(Math.random(),.7)*45, s = .7 + Math.random()*1.1;
+    const x = Math.cos(a)*r, z = Math.sin(a)*r;
+    o.rotation.set(0,Math.random()*6,0); o.scale.setScalar(s);
+    o.position.set(x,.7*s,z); o.updateMatrix(); trunk.setMatrixAt(i,o.matrix);
+    o.position.set(x,2.5*s,z); o.updateMatrix(); c1.setMatrixAt(i,o.matrix);
+    o.position.set(x,4.2*s,z); o.updateMatrix(); c2.setMatrixAt(i,o.matrix);
+  }
+  scene.add(trunk,c1,c2);
+
+  // Obor
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(.07,.1,2.5,8), new THREE.MeshStandardMaterial({color:0x3b2616,roughness:.9}));
+  pole.position.y = 1.25; scene.add(pole);
+  const cup = new THREE.Mesh(new THREE.CylinderGeometry(.22,.1,.3,10), new THREE.MeshStandardMaterial({color:0x222222,metalness:.8,roughness:.4}));
+  cup.position.y = 2.5; scene.add(cup);
+  for(let i=0;i<9;i++){ const s = new THREE.Mesh(new THREE.DodecahedronGeometry(.3+Math.random()*.25,0), new THREE.MeshStandardMaterial({color:0x3a3a40,roughness:1,flatShading:true}));
+    const a = i/9*6.283; s.position.set(Math.cos(a)*.9, .15, Math.sin(a)*.9); s.rotation.set(Math.random(),Math.random(),0); scene.add(s); }
+
+  // Api (partikel)
+  const F = 160, fp = new Float32Array(F*3), fc = new Float32Array(F*3), life = new Float32Array(F), vel = new Float32Array(F*3);
+  for(let i=0;i<F;i++) life[i] = Math.random();
+  const fg = new THREE.BufferGeometry();
+  fg.setAttribute("position", new THREE.BufferAttribute(fp,3)); fg.setAttribute("color", new THREE.BufferAttribute(fc,3));
+  const tex = glowTex();
+  flame = new THREE.Points(fg, new THREE.PointsMaterial({size:.75, map:tex, vertexColors:true, blending:THREE.AdditiveBlending, depthWrite:false, transparent:true}));
+  flame.userData = {fp,fc,life,vel,F}; scene.add(flame);
+  fcol = new THREE.Color(T.fire);
+
+  // Bara melayang
+  const E = 320, ep = new Float32Array(E*3);
+  for(let i=0;i<E;i++){ ep[i*3]=(Math.random()-.5)*34; ep[i*3+1]=Math.random()*14; ep[i*3+2]=(Math.random()-.5)*34; }
+  const eg = new THREE.BufferGeometry(); eg.setAttribute("position", new THREE.BufferAttribute(ep,3));
+  emb = new THREE.Points(eg, new THREE.PointsMaterial({size:.12, map:tex, color:0xffa050, blending:THREE.AdditiveBlending, depthWrite:false, transparent:true}));
+  scene.add(emb);
+
+  // Cahaya
+  scene.add(new THREE.HemisphereLight(0x6f86b8, 0x1a2a1a, .75));
+  const moon = new THREE.DirectionalLight(0x9db8ff, .8); moon.position.set(-12,22,-10); scene.add(moon);
+  light = new THREE.PointLight(0xff8a3a, 3, 26, 2); light.position.set(0,2.9,0); scene.add(light);
+
+  addEventListener("pointermove", e => { mx = e.clientX/innerWidth*2-1; my = e.clientY/innerHeight*2-1; });
+  addEventListener("resize", resize); resize();
+  requestAnimationFrame(loop);
+}
+function resize(){ ren.setSize(innerWidth, innerHeight, false); cam.aspect = innerWidth/innerHeight; cam.updateProjectionMatrix(); }
+
+function loop(){
+  const dt = Math.min(clock.getDelta(), .05), t = clock.elapsedTime, k = reduce ? .3 : 1;
+  sky.material.uniforms.t.value = t;
+  // warna tema
+  sky.material.uniforms.c1.value.lerp(new THREE.Color(T.aur), .04);
+  sky.material.uniforms.c2.value.lerp(new THREE.Color(T.hor), .04);
+  fcol.lerp(new THREE.Color(T.ffire || T.fire), .05);
+  scene.fog.color.lerp(new THREE.Color(T.fog), .04);
+  light.color.copy(fcol);
+  light.intensity = 3 + Math.sin(t*14)*.35 + Math.random()*.4;
+
+  // api
+  const {fp,fc,life,vel,F} = flame.userData;
+  for(let i=0;i<F;i++){
+    life[i] += dt*(.9+(i%5)*.12)*k;
+    if(life[i] > 1){ life[i] = 0; fp[i*3]=(Math.random()-.5)*.18; fp[i*3+1]=2.62; fp[i*3+2]=(Math.random()-.5)*.18;
+      vel[i*3]=(Math.random()-.5)*.25; vel[i*3+1]=.9+Math.random()*1.1; vel[i*3+2]=(Math.random()-.5)*.25; }
+    fp[i*3]+=vel[i*3]*dt*k + Math.sin(t*3+i)*.003; fp[i*3+1]+=vel[i*3+1]*dt*k; fp[i*3+2]+=vel[i*3+2]*dt*k;
+    const f = Math.pow(1-life[i],1.6), w = 1-life[i]*.6;
+    fc[i*3]=fcol.r*f; fc[i*3+1]=fcol.g*f*w; fc[i*3+2]=fcol.b*f*w*.7;
+  }
+  flame.geometry.attributes.position.needsUpdate = flame.geometry.attributes.color.needsUpdate = true;
+  // bara
+  const ep = emb.geometry.attributes.position.array;
+  for(let i=0;i<ep.length;i+=3){ ep[i+1]+=dt*(.4+(i%7)*.08)*k; ep[i]+=Math.sin(t+i)*.004; if(ep[i+1]>14) ep[i+1]=0; }
+  emb.geometry.attributes.position.needsUpdate = true;
+
+  // kamera
+  if(cine){ orbit += dt*.12*k; const r = 11 + Math.sin(t*.2)*1.5;
+    cam.position.lerp(new THREE.Vector3(Math.cos(orbit)*r, 2.8+Math.sin(t*.3), Math.sin(orbit)*r), .03); look.lerp(new THREE.Vector3(0,3,0),.05);
+  } else {
+    const p = vt.p; cam.position.x += (p[0]+mx*1.2 - cam.position.x)*.035; cam.position.y += (p[1]-my*.6 - cam.position.y)*.035; cam.position.z += (p[2] - cam.position.z)*.035;
+    look.lerp(new THREE.Vector3(...vt.l), .04);
+  }
+  cam.lookAt(look);
+  ren.render(scene, cam);
+  requestAnimationFrame(loop);
+}
+
+/* ===== Video latar (opsional) ===== */
+const bgv = $("bgv");
+bgv.addEventListener("loadeddata", () => { bgv.style.opacity = .85; if(sky) sky.visible = false; if(scene) scene.fog.density = .02; bgv.play().catch(()=>{}); });
+
+/* ===== Navigasi, tema, mode sinematik ===== */
+let current = null, currentGame = null, stopFn = null;
+function go(id){
+  if(!$(id)) id = "home"; current = id;
+  document.querySelectorAll(".page").forEach(p => p.classList.toggle("on", p.id===id));
+  document.querySelectorAll("nav button").forEach(b => b.dataset.go===id ? b.setAttribute("aria-current","page") : b.removeAttribute("aria-current"));
+  history.replaceState(null,"","#"+id); scrollTo(0,0);
+  vt = view[id];
+  if(id!=="product") stopGame(); else if(!currentGame) openGame("archery");
+}
+document.addEventListener("click", e => { const t = e.target.closest("[data-go]"); if(t){ e.preventDefault(); go(t.dataset.go); } });
+function setTheme(cap){
+  document.documentElement.dataset.theme = cap ? "capitol" : "";
+  $("t-d").setAttribute("aria-pressed", !cap); $("t-c").setAttribute("aria-pressed", cap);
+  T = cap ? themes.c : themes.d;
+}
+$("t-d").onclick = () => setTheme(false); $("t-c").onclick = () => setTheme(true);
+function setCine(on){ cine = on; document.body.classList.toggle("cine", on); if(on) $("exit").focus(); }
+$("cine").onclick = () => setCine(true); $("cine2").onclick = () => setCine(true);
+$("exit").onclick = () => setCine(false);
+addEventListener("keydown", e => { if(e.key==="Escape") setCine(false); });
+
+/* ================== GAME ================== */
+const stage = $("stage"), best = {a:0, m:null};
+function stopGame(){ if(stopFn) stopFn(); stopFn = null; }
+function openGame(n){
+  stopGame(); currentGame = n;
+  document.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-pressed", b.dataset.g===n));
+  ({archery, memory, quiz}[n])();
+}
+$("tabs").addEventListener("click", e => { const b = e.target.closest(".tab"); if(b) openGame(b.dataset.g); });
+
+/* Panah Tepat */
+function archery(){
+  stage.innerHTML = `<div class="hud"><span>Skor: <b id="sc">0</b></span><span>Waktu: <b id="tm">30</b></span><span>Terbaik: <b>${best.a}</b></span></div>
+    <canvas class="game" id="cv" width="640" height="360" aria-label="Arena memanah"></canvas>
+    <button class="btn" id="go">Mulai</button><p class="msg" id="msg">Klik atau ketuk target. Tengah bernilai 10, cincin kedua 5, luar 2.</p>`;
+  const cv = $("cv"), c = cv.getContext("2d");
+  let tg = [], mk = [], score = 0, left = 0, last = 0, run = false, raf;
+  const nt = () => ({x:Math.random()*560+40, y:Math.random()*220+60, r:34+Math.random()*14, vx:(Math.random()<.5?-1:1)*(70+Math.random()*80+score*2), vy:(Math.random()-.5)*40});
+  function draw(){
+    c.clearRect(0,0,640,360); c.fillStyle = "rgba(0,0,0,.35)"; c.fillRect(0,0,640,360);
+    tg.forEach(t => [[1,"#f4ebe2"],[.7,"#c4402b"],[.4,"#E3B04B"]].forEach(([k,col]) => { c.fillStyle = col; c.beginPath(); c.arc(t.x,t.y,t.r*k,0,6.283); c.fill(); }));
+    mk = mk.filter(m => m.life>0);
+    mk.forEach(m => { c.globalAlpha = Math.min(1,m.life); c.fillStyle = m.hit?"#fff":"#aaa"; c.font = "700 22px Oswald,sans-serif"; c.fillText(m.txt, m.x-10, m.y-(1-m.life)*30); c.globalAlpha = 1; });
+  }
+  function tick(ts){
+    const dt = Math.min(.05,(ts-last)/1000); last = ts;
+    if(run){ left -= dt;
+      tg.forEach(t => { t.x += t.vx*dt; t.y += t.vy*dt; if(t.x<t.r||t.x>640-t.r) t.vx*=-1; if(t.y<t.r+10||t.y>350-t.r) t.vy*=-1; });
+      $("tm").textContent = Math.max(0,Math.ceil(left));
+      if(left<=0){ run = false; if(score>best.a) best.a = score; $("msg").textContent = `Waktu habis! Skormu ${score}. Terbaik: ${best.a}.`; $("go").textContent = "Main lagi"; } }
+    mk.forEach(m => m.life -= dt*1.2); draw(); raf = requestAnimationFrame(tick);
+  }
+  cv.addEventListener("pointerdown", e => {
+    if(!run) return;
+    const r = cv.getBoundingClientRect(), x = (e.clientX-r.left)*640/r.width, y = (e.clientY-r.top)*360/r.height;
+    const i = tg.findIndex(t => Math.hypot(t.x-x,t.y-y) <= t.r);
+    if(i<0){ mk.push({x,y,txt:"✕",hit:false,life:1}); return; }
+    const t = tg[i], d = Math.hypot(t.x-x,t.y-y)/t.r, p = d<.4?10:d<.7?5:2;
+    score += p; $("sc").textContent = score; mk.push({x,y,txt:"+"+p,hit:true,life:1}); tg[i] = nt();
+  });
+  $("go").onclick = () => { score = 0; left = 30; tg = [nt(),nt(),nt()]; run = true; $("sc").textContent = 0; $("msg").textContent = "Bidik!"; };
+  tg = [nt(),nt()]; raf = requestAnimationFrame(ts => { last = ts; tick(ts); });
+  stopFn = () => cancelAnimationFrame(raf);
+}
+
+/* Memori Distrik */
+function memory(){
+  const P = [["⛏️","12"],["🌾","11"],["🐟","4"],["💡","3"],["🪵","7"],["💎","1"]];
+  const deck = [...P,...P].sort(() => Math.random()-.5);
+  stage.innerHTML = `<div class="hud"><span>Langkah: <b id="mv">0</b></span><span>Pasangan: <b id="pr">0</b>/6</span><span>Terbaik: <b>${best.m ?? "-"}</b></span></div>
+    <div class="mem" id="mem"></div><p class="msg" id="msg">Cocokkan lambang industri tiap distrik: tambang, pertanian, perikanan, teknologi, kayu, dan kemewahan.</p><button class="btn" id="rs">Acak ulang</button>`;
+  let open = [], mv = 0, ok = 0, lock = false;
+  deck.forEach(d => {
+    const b = document.createElement("button"); b.className = "card"; b.setAttribute("aria-label","Kartu tertutup");
+    b.innerHTML = `<i class="f">?</i><i class="b">${d[0]}</i>`; $("mem").appendChild(b);
+    b.onclick = () => {
+      if(lock || b.classList.contains("up")) return;
+      b.classList.add("up"); b.setAttribute("aria-label","Distrik "+d[1]); open.push({b,d});
+      if(open.length<2) return;
+      mv++; $("mv").textContent = mv; lock = true; const [x,y] = open;
+      if(x.d[1]===y.d[1]){ x.b.classList.add("done"); y.b.classList.add("done"); ok++; open = []; lock = false; $("pr").textContent = ok;
+        if(ok===6){ if(best.m===null || mv<best.m) best.m = mv; $("msg").textContent = `Selesai dalam ${mv} langkah. Terbaik: ${best.m}.`; } }
+      else setTimeout(() => { x.b.classList.remove("up"); y.b.classList.remove("up"); open = []; lock = false; }, 800);
+    };
+  });
+  $("rs").onclick = memory;
+}
+
+/* Kuis Panem */
+function quiz(){
+  const Q = [
+    {q:"Dari distrik mana Katniss Everdeen berasal?", o:["Distrik 4","Distrik 11","Distrik 12","Distrik 13"], a:2},
+    {q:"Siapa yang digantikan Katniss saat mengajukan diri di hari pemungutan?", o:["Rue","Primrose","Glimmer","Madge"], a:1},
+    {q:"Burung apa yang menjadi simbol perlawanan terhadap Capitol?", o:["Rajawali","Merpati","Mockingjay","Gagak"], a:2},
+    {q:"Berapa peserta (tribute) dalam satu Hunger Games?", o:["12","16","24","48"], a:2},
+    {q:"Tahun berapa film The Hunger Games pertama dirilis?", o:["2010","2012","2014","2015"], a:1}
+  ];
+  let i = 0, s = 0;
+  (function show(){
+    if(i>=Q.length){
+      stage.innerHTML = `<div class="hud"><span>Skor akhir: <b>${s}/5</b></span></div><p class="q">${s===5?"Kamu penguasa Panem!":s>=3?"Kamu penggemar sejati.":"Tonton ulang filmnya, lalu coba lagi."}</p><button class="btn" id="ag">Main lagi</button>`;
+      $("ag").onclick = quiz; return; }
+    const x = Q[i];
+    stage.innerHTML = `<div class="hud"><span>Pertanyaan: <b>${i+1}/5</b></span><span>Skor: <b>${s}</b></span></div><p class="q">${x.q}</p>
+      <div class="opts">${x.o.map((t,k) => `<button class="opt" data-k="${k}">${t}</button>`).join("")}</div><p class="msg" id="msg"></p><button class="btn" id="nx" hidden>Lanjut</button>`;
+    stage.querySelector(".opts").onclick = e => {
+      const b = e.target.closest(".opt"); if(!b) return;
+      const k = +b.dataset.k, good = k===x.a; if(good) s++;
+      stage.querySelectorAll(".opt").forEach((o,n) => { o.disabled = true; if(n===x.a) o.classList.add("ok"); else if(n===k) o.classList.add("no"); });
+      $("msg").textContent = good ? "Benar!" : "Belum tepat. Jawaban yang benar: "+x.o[x.a]+".";
+      const nx = $("nx"); nx.hidden = false; nx.textContent = i===Q.length-1 ? "Lihat skor" : "Lanjut"; nx.focus(); nx.onclick = () => { i++; show(); };
+    };
+  })();
+}
+
+/* ===== Mulai ===== */
+try { initScene(); } catch(e){ console.warn("WebGL tidak tersedia", e); document.body.style.background = "radial-gradient(circle at 50% 80%,#3a1a0a,#05070a 70%)"; }
+go(location.hash.slice(1) || "home");
+</script>
+</body>
+</html>
